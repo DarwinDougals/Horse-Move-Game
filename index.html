@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="scripts/common.js"></script>
+    <title> Ход конем</title>
+</head>
+<body>
+
+<canvas id="cnv"></canvas>
+<script type="text/javascript" src="scripts/grid.js"></script>
+
+
+<script type="text/javascript">
+
+
+
+
+    initCanvas();
+
+    var count=1;
+
+    var game = function(){
+        for(var i = 0; i < rect.length;i++){
+           if((rect[i].xx+rect[i].yy)%2 == 0){
+               contex.fillStyle = 'brown';
+           }
+            else{
+               contex.fillStyle = 'grey';
+           }
+            rect[i].draw();
+            if(rect[i].selected){
+                rect[i].stroke();
+                rect[i].fillNumber(rect[i].i);
+
+            }
+        }
+    };
+
+    canvas.onclick = function(event){
+        contex.clearRect(0 ,0 , width ,height);
+        var x = event.pageX,
+            y = event.pageY;
+        for(var i=0;i<rect.length;i++){
+            if(isCursorInRect(x,y,rect[i])){
+                stepArr.unshift(rect[i]);
+                if((stepRight(stepArr,rect[i],count))&& rect[i].selected != true){
+                    count=rect[i].select(count,rect[i]);
+                    console.log("rect["+i+"] selected");
+                    count++;
+                }else if(rect[i].selected == true && rect[i].xx == stepArr[1].xx && rect[i].yy == stepArr[1].yy){
+                    rect[i].select(count,rect[i]);
+                    console.log("rect["+i+"] unselected");
+                    stepArr.shift();
+                    console.log(stepArr);
+                    count--;
+                }else if(rect[i].selected == true){
+                    console.log("rect["+i+"] already selected");
+                    stepArr.shift();
+                }
+                else{
+                    console.log("rect["+i+"] unreachable");
+                    stepArr.shift();
+                }
+            }
+
+        }
+    };
+
+   startGame(game);
+
+
+</script>
+
+
+
+</body>
+</html>
